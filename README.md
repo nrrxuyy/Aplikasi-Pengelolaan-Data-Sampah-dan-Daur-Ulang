@@ -1,1 +1,1 @@
-# Aplikasi-Pengelolaan-Data-Sampah-dan-Daur-Ulang
+Aplikasi ini dirancang untuk membantu pengguna mencatat data sampah rumah tangga harian, menghitung persentase daur ulang, dan memberikan umpan balik untuk mendorong praktik pengelolaan sampah yang bertanggung jawab
