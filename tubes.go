@@ -6,75 +6,64 @@ import (
 	"strings"
 )
 
-type Sampah struct {
-	Tanggal   string
-	Organik   float64 // dalam Kg
-	Anorganik float64 // dalam Kg
+type sampah struct {
+	tanggal int
+	Or      float64 //dalam Kg
+	An      float64 //dalam Kg
 }
 
 const nmax = 30
 
-var dataSampah [nmax]Sampah
+type dataSampah [nmax]sampah
+
 var jumData int
 
 func main() {
-	var i int
+	var data dataSampah
+	var i int = 0
 	var bulan, status string
-	var totalOrganik, totalAnorganik float64
-	var persenOrganik, persenAnorganik, persenTotal float64
-	var username string
+	var organik, anorganik, po, pa, pt float64
 
-	fmt.Print("Halo, siapa namamu? ")
-	fmt.Scan(&username)
-	fmt.Printf("Halo %s, kamu mau merekap sampahmu pada bulan apa? ", username)
+	fmt.Print("Halo kamu mau merekap sampahmu pada bulan apa : ")
 	fmt.Scan(&bulan)
-	fmt.Println()
+	fmt.Println(" ")
 
-	// Input data sampah harian sampai user ketik "stop"
 	for {
-		fmt.Print("Masukkan tanggal, kalau mau berhenti ketik 'stop': ")
-		fmt.Scan(&dataSampah[i].Tanggal)
-		if strings.ToLower(dataSampah[i].Tanggal) == "stop" {
+		fmt.Print("Masukkan tanggal , kalo mau berhenti ketik 0 ya : ")
+		fmt.Scan(&data[i].tanggal)
+
+		if data[i].tanggal == 0 {
 			break
 		}
 
 		fmt.Print("Masukkan jumlah sampah organik (Kg): ")
-		fmt.Scan(&dataSampah[i].Organik)
-
+		fmt.Scan(&data[i].Or)
 		fmt.Print("Masukkan jumlah sampah anorganik (Kg): ")
-		fmt.Scan(&dataSampah[i].Anorganik)
+		fmt.Scan(&data[i].An)
 
-		totalOrganik += dataSampah[i].Organik
-		totalAnorganik += dataSampah[i].Anorganik
+		organik += data[i].Or
+		anorganik += data[i].An
 
 		i++
-		if i >= nmax {
-			fmt.Println("Data sampah sudah penuh, tidak bisa input lagi.")
-			break
-		}
-		fmt.Println()
+		fmt.Println(" ")
 	}
 
 	jumData = i
 
-	fmt.Print("Apakah kamu mendaur ulang sampah bulan ini? (ya/tidak): ")
+	fmt.Println(" ")
+	fmt.Print("Apakah kamu mendaur ulang sampah bulan ini ? ")
 	fmt.Scan(&status)
-	fmt.Println()
+	fmt.Println(" ")
 
-	// Hitung persentase daur ulang jika jawab ya
 	switch strings.ToLower(status) {
 	case "ya", "iya", "udah":
-		persenOrganik, persenAnorganik, persenTotal = daurUlang(totalOrganik, totalAnorganik)
-	default:
-		persenOrganik, persenAnorganik, persenTotal = 0, 0, 0
+		po, pa, pt = daurUlang(organik, anorganik)
 	}
 
-	// Pembulatan hasil persentase ke 1 desimal
-	persenOrganik = math.Round(persenOrganik*10) / 10
-	persenAnorganik = math.Round(persenAnorganik*10) / 10
-	persenTotal = math.Round(persenTotal*10) / 10
+	po = math.Round(po*10) / 10
+	pa = math.Round(pa*10) / 10
+	pt = math.Round(pt*10) / 10
 
-	// Menu interaktif
 	for {
 		fmt.Println("\n--- MENU LANJUTAN ---")
 		fmt.Println("1. Edit Data")
@@ -84,202 +73,219 @@ func main() {
 		fmt.Println("5. Ringkasan Singkat")
 		fmt.Println("0. Keluar")
 		fmt.Print("Pilih menu: ")
-
 		var pilihan int
 		fmt.Scan(&pilihan)
 
 		switch pilihan {
 		case 1:
-			editData()
+			editData(&data)
 		case 2:
-			hapusData()
+			hapusData(&data)
 		case 3:
-			cariData()
+			cariData(data)
 		case 4:
-			urutkanData()
+			urutkanData(&data)
 		case 5:
-			tampilData(totalOrganik, totalAnorganik, persenOrganik, persenAnorganik, persenTotal, status)
+			tampilData(organik, anorganik, po, pa, pt, status)
 		case 0:
 			fmt.Println("Program selesai.")
 			return
 		default:
-			fmt.Println("Pilihan kamu ga ada di menu.")
+			fmt.Println("Pilihan kamu gaada di menu.")
 		}
 	}
 }
 
-// Fungsi untuk menghitung persentase daur ulang
 func daurUlang(organik, anorganik float64) (float64, float64, float64) {
-	var daurOrganik, daurAnorganik float64
+	var daurOrganik, daurAnorganik, totalDaur float64
 
-	fmt.Print("Berapa jumlah sampah organik yang sudah kamu daur ulang (Kg)? ")
+	fmt.Print("berapa jumlah sampah organik yang udah kamu daur ulang ? tolong diisi dengan satuan kilogram ya : ")
 	fmt.Scan(&daurOrganik)
-	fmt.Println()
-
-	fmt.Print("Berapa jumlah sampah anorganik yang sudah kamu daur ulang (Kg)? ")
+	fmt.Println(" ")
+	fmt.Print("kalo gitu berapa jumlah sampah anorganik yang udah kamu daur ulang ? yang ini juga pakai kilogram ya : ")
 	fmt.Scan(&daurAnorganik)
-	fmt.Println()
+	fmt.Println(" ")
 
-	totalSampah := organik + anorganik
-	totalDaur := daurOrganik + daurAnorganik
+	total := organik + anorganik
+	totalDaur = daurOrganik + daurAnorganik
 
-	var persenOrganik, persenAnorganik, persenTotal float64
-
-	if organik > 0 {
-		persenOrganik = (daurOrganik / organik) * 100
-	}
-
-	if anorganik > 0 {
-		persenAnorganik = (daurAnorganik / anorganik) * 100
-	}
-
-	if totalSampah > 0 {
-		persenTotal = (totalDaur / totalSampah) * 100
-	}
+	persenOrganik := (daurOrganik / organik) * 100
+	persenAnorganik := (daurAnorganik / anorganik) * 100
+	persenTotal := (totalDaur / total) * 100
 
 	return persenOrganik, persenAnorganik, persenTotal
 }
 
-// Fungsi menampilkan ringkasan data dan persentase daur ulang
 func tampilData(organik, anorganik, po, pa, pt float64, status string) {
-	fmt.Printf("Selama %d hari kamu sudah mengeluarkan sampah sebanyak: %.1f Kg\n", jumData, organik+anorganik)
+
+	if po >= 100 {
+		po = 100
+	}
+	if po >= 100 {
+		po = 100
+	}
+
+	fmt.Printf("Selama %d hari kamu sudah mengeluarkan sampah sebanyak : %.1f Kg\n", jumData, organik+anorganik)
 
 	switch strings.ToLower(status) {
 	case "ya", "iya", "udah":
 		fmt.Printf("Kamu sudah mendaur ulang sebanyak %.1f%% dari keseluruhan sampah yang kamu keluarkan,\n", pt)
 		fmt.Printf("Untuk sampah organik kamu telah mendaur ulang %.1f%% dan untuk sampah anorganik %.1f%%\n", po, pa)
-
 		if pt >= 50 {
-			fmt.Println("Wow luar biasa, kamu harus tetap konsisten ya demi bumi yang lebih baik!")
-		} else if pt >= 9 {
-			fmt.Println("Ayo kamu pasti bisa lebih dari ini, mari bersama mewujudkan lingkungan hidup yang lebih baik.")
-		} else if pt >= 1 {
-			fmt.Println("Kamu harus lebih baik dari ini, untuk menjadikan bumi menjadi tempat yang lebih baik.")
+			fmt.Println("Wow luar biasa, kamu harus tetap konsisten ya demi bumi yang lebih baik ! ")
+		} else if pt < 50 && pt >= 9 {
+			fmt.Println("Ayo kamu pasti bisa lebih dari ini, mari bersama mewujudkan lingkungan hidup yang lebih baik ")
+		} else if pt < 9 && pt >= 1 {
+			fmt.Println("Kamu harus lebih baik dari ini, untuk menjadikan bumi menjadi tempat yang lebih baik")
 		} else {
-			fmt.Println("Kamu engga mendaur ulang sama sekali.")
+			fmt.Println("kamu engga mendaur ulang sama sekali. Parah banget lu bang")
 		}
-	default:
-		fmt.Println("Kamu engga mendaur ulang sama sekali.")
 	}
+
+	switch strings.ToLower(status) {
+	case "ngga", "tidak", "belom":
+		fmt.Println("kamu engga mendaur ulang sama sekali. Parah banget lu bang")
+	}
+
 }
 
-// Fungsi edit data sampah berdasarkan tanggal
-func editData() {
-	var tanggal string
-	fmt.Print("Masukkan tanggal yang ingin diedit: ")
+func editData(a *dataSampah) {
+	var tanggal int
+	fmt.Print("Masukkan tanggal yang pengen kamu edit: ")
 	fmt.Scan(&tanggal)
 
 	for i := 0; i < jumData; i++ {
-		if dataSampah[i].Tanggal == tanggal {
+		if a[i].tanggal == tanggal {
 			fmt.Print("Masukkan jumlah sampah organik (Kg): ")
-			fmt.Scan(&dataSampah[i].Organik)
+			fmt.Scan(&a[i].Or)
 			fmt.Print("Masukkan jumlah sampah anorganik (Kg): ")
-			fmt.Scan(&dataSampah[i].Anorganik)
-			fmt.Println("Data sudah diedit.")
+			fmt.Scan(&a[i].An)
+			fmt.Println("Data udah diedit")
 			return
 		}
 	}
-
-	fmt.Println("Tanggal tidak ditemukan.")
+	fmt.Println("Tanggalnya engga ketemu")
 }
 
-// Fungsi hapus data sampah berdasarkan tanggal
-func hapusData() {
-	var tanggal string
+func hapusData(a *dataSampah) {
+	var tanggal int
 	fmt.Print("Masukkan tanggal yang ingin dihapus: ")
 	fmt.Scan(&tanggal)
 
 	for i := 0; i < jumData; i++ {
-		if dataSampah[i].Tanggal == tanggal {
-			// Geser data setelah i ke kiri
+		if a[i].tanggal == tanggal {
 			for j := i; j < jumData-1; j++ {
-				dataSampah[j] = dataSampah[j+1]
+				a[j] = a[j+1]
 			}
 			jumData--
-			fmt.Println("Data sudah dihapus.")
+			fmt.Println("Data udah dihapus")
 			return
 		}
 	}
-
-	fmt.Println("Tanggal tidak ditemukan.")
+	fmt.Println("Tanggalnya engga ketemu")
 }
 
-// Fungsi cari data sampah berdasarkan tanggal
-func cariData() {
-	var tanggal string
-	fmt.Print("Masukkan tanggal yang ingin dicari: ")
+func cariData(a dataSampah) {
+	var tanggal int
+	fmt.Print("Masukkan tanggal yang pengen kamu cari: ")
 	fmt.Scan(&tanggal)
 
+	ditemukan := false
 	for i := 0; i < jumData; i++ {
-		if dataSampah[i].Tanggal == tanggal {
-			fmt.Printf("Tanggal: %s, Organik: %.2f Kg, Anorganik: %.2f Kg\n", dataSampah[i].Tanggal, dataSampah[i].Organik, dataSampah[i].Anorganik)
-			return
+		if a[i].tanggal == tanggal {
+			fmt.Printf("Tanggal: %d, Organik: %.2f, Anorganik: %.2f\n", a[i].tanggal, a[i].Or, a[i].An)
+			ditemukan = true
+			break
 		}
 	}
-
-	fmt.Println("Data tidak ditemukan.")
+	if !ditemukan {
+		fmt.Println("Data tidak ditemukan.")
+	}
 }
 
-// Fungsi urutkan data sampah berdasarkan tanggal atau total sampah
-func urutkanData() {
-	var pilihan int
+func urutkanData(a *dataSampah) {
+	var i, pass, l, r, m, f, x int
+	var temp sampah
+	var bs string
 
 	fmt.Println("Pilih kriteria pengurutan:")
 	fmt.Println("1. Berdasarkan Tanggal")
 	fmt.Println("2. Berdasarkan Jumlah Total Sampah")
 	fmt.Print("Masukkan pilihan: ")
+
+	var pilihan int
 	fmt.Scan(&pilihan)
 
-	if pilihan != 1 && pilihan != 2 {
-		fmt.Println("Pilihan tidak valid.")
-		return
-	}
-
-	// Insertion sort
-	for pass := 1; pass < jumData; pass++ {
-		temp := dataSampah[pass]
-		i := pass - 1
-
-		for i >= 0 {
-			var shouldSwap bool
+	for pass = 1; pass < jumData; i++ {
+		temp = a[pass]
+		i = pass
+		for i > 0 {
 			if pilihan == 1 {
-				shouldSwap = temp.Tanggal < dataSampah[i].Tanggal
+				if temp.tanggal < a[i-1].tanggal {
+					a[i] = a[i-1]
+				} else {
+					break
+				}
+			} else if pilihan == 2 {
+				if (temp.Or + temp.An) < (a[i-1].Or + a[i-1].An) {
+					a[i] = a[i-1]
+				} else {
+					break
+				}
 			} else {
-				totalTemp := temp.Organik + temp.Anorganik
-				totalI := dataSampah[i].Organik + dataSampah[i].Anorganik
-				shouldSwap = totalTemp < totalI
+				fmt.Println("Pilihan tidak valid.")
 			}
-
-			if !shouldSwap {
-				break
-			}
-
-			dataSampah[i+1] = dataSampah[i]
-			i--
+			i = i - 1
 		}
-		dataSampah[i+1] = temp
+		a[i] = temp
+		pass += 1
 	}
 
-	var tampilHasil string
-	fmt.Print("Tampilkan hasil pengurutan? (ya/tidak): ")
-	fmt.Scan(&tampilHasil)
+	if pilihan == 1 {
+		fmt.Println("ini hasil pengurutan berdasar tanggal")
+	} else if pilihan == 2 {
+		fmt.Println("ini hasil pengurutan berdasar tanggal")
+	}
 
-	if strings.ToLower(tampilHasil) == "ya" {
-		if pilihan == 1 {
-			fmt.Println("\nHasil pengurutan berdasarkan tanggal:")
+	fmt.Println("\nData setelah diurutkan:")
+	fmt.Println("+------------+--------------+----------------+--------------+")
+	fmt.Println("|   Tanggal  | Organik (Kg) | Anorganik (Kg) |  Total (Kg)  |")
+	fmt.Println("+------------+--------------+----------------+--------------+")
+	for i := 0; i < jumData; i++ {
+		total := a[i].Or + a[i].An
+		fmt.Printf("| %10d | %12.2f | %14.2f | %12.2f |\n", a[i].tanggal, a[i].Or, a[i].An, total)
+	}
+	fmt.Println("+------------+--------------+----------------+--------------+")
+
+	fmt.Println("mau cari data hasil diurutkan ?")
+	fmt.Scan(&bs)
+
+	l = 1
+	r = jumData
+	f = -1
+
+	switch strings.ToLower(bs) {
+	case "ya", "iya", "udah":
+		fmt.Println("mau cari data kamu pas tanggal berapa ?")
+		fmt.Scan(&x)
+		for l <= r && f == -1 {
+			m = (l + r) / 2
+			if x < a[m].tanggal {
+				r = m - 1
+			} else if x > a[m].tanggal {
+				l = m + 1
+			} else {
+				f = m
+			}
+		}
+		if f != -1 {
+			fmt.Printf("Tanggal: %d, Organik: %.2f, Anorganik: %.2f, Total: %.2f\n", a[f].tanggal, a[f].Or, a[f].An, a[f].Or+a[f].An)
 		} else {
-			fmt.Println("\nHasil pengurutan berdasarkan total sampah:")
+			fmt.Print("kamu engga masukin data pas tanggal itu")
 		}
 
-		fmt.Println("+------------+--------------+----------------+--------------+")
-		fmt.Println("|    Tanggal | Organik (Kg) | Anorganik (Kg) |   Total (Kg) |")
-		fmt.Println("+------------+--------------+----------------+--------------+")
-		for i := 0; i < jumData; i++ {
-			total := dataSampah[i].Organik + dataSampah[i].Anorganik
-			fmt.Printf("| %10s | %12.2f | %14.2f | %12.2f |\n", dataSampah[i].Tanggal, dataSampah[i].Organik, dataSampah[i].Anorganik, total)
-		}
-		fmt.Println("+------------+--------------+----------------+--------------+")
-	} else {
-		fmt.Println("Hasil pengurutan tidak ditampilkan.")
+	case "engga", "tidak", "ga":
+		fmt.Println("okee")
 	}
+
 }
