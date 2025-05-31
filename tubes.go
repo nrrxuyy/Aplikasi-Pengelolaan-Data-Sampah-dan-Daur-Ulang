@@ -8,8 +8,8 @@ import (
 
 type sampah struct {
 	tanggal int
-	Or      float64 //dalam Kg
-	An      float64 //dalam Kg
+	Or      float64
+	An      float64
 }
 
 const nmax = 30
@@ -18,7 +18,20 @@ type dataSampah [nmax]sampah
 
 var jumData int
 
+/*
+	IS : Program menerima bulan, data harian (tanggal, organik, anorganik), status daur ulang.
+	FS: Program menyediakan menu untuk edit, hapus, cari, urut data; menghitung persentase daur ulang; menampilkan ringkasan sampah.
+*/
+
 func main() {
+	/*
+		IS:  Tidak ada input langsung dari fungsi ini, tetapi menerima input tidak langsung dari user melalui fungsi lain.
+		FS:  Mengelola alur utama program:
+			-   Menerima input bulan dan data sampah harian.
+			-   Menghitung total sampah.
+			-   Memproses status daur ulang.
+			-   Menampilkan menu dan memanggil fungsi lain berdasarkan pilihan pengguna.
+	*/
 	var data dataSampah
 	var i int = 0
 	var bulan, status string
@@ -97,6 +110,11 @@ func main() {
 }
 
 func daurUlang(organik, anorganik float64) (float64, float64, float64) {
+	/*
+		IS:  Menerima total sampah organik dan anorganik. Meminta input jumlah sampah yang didaur ulang.
+		FS:  Menghitung persentase sampah organik, anorganik, dan total yang didaur ulang.
+			Mengembalikan persentase tersebut.
+	*/
 	var daurOrganik, daurAnorganik, totalDaur float64
 
 	fmt.Print("berapa jumlah sampah organik yang udah kamu daur ulang ? tolong diisi dengan satuan kilogram ya : ")
@@ -117,12 +135,21 @@ func daurUlang(organik, anorganik float64) (float64, float64, float64) {
 }
 
 func tampilData(organik, anorganik, po, pa, pt float64, status string) {
+	/*
+		IS:  Menerima total sampah organik dan anorganik, persentase daur ulang, dan status daur ulang.
+		FS:  Menampilkan total sampah.
+			Jika ada daur ulang, menampilkan persentase dan pesan motivasi.
+			Jika tidak ada daur ulang, menampilkan pesan negatif.
+	*/
 
 	if po >= 100 {
 		po = 100
 	}
 	if po >= 100 {
 		po = 100
+	}
+	if pt > 100 {
+		pt = 100
 	}
 
 	fmt.Printf("Selama %d hari kamu sudah mengeluarkan sampah sebanyak : %.1f Kg\n", jumData, organik+anorganik)
@@ -150,6 +177,12 @@ func tampilData(organik, anorganik, po, pa, pt float64, status string) {
 }
 
 func editData(a *dataSampah) {
+	/*
+		IS:  Menerima pointer ke array data sampah. Meminta input tanggal data yang akan diedit dan data sampah baru.
+		FS:  Mencari data berdasarkan tanggal.
+			Jika data ditemukan, memperbarui data.
+			Jika data tidak ditemukan, menampilkan pesan error.
+	*/
 	var tanggal int
 	fmt.Print("Masukkan tanggal yang pengen kamu edit: ")
 	fmt.Scan(&tanggal)
@@ -168,6 +201,12 @@ func editData(a *dataSampah) {
 }
 
 func hapusData(a *dataSampah) {
+	/*
+		IS:  Menerima pointer ke array data sampah. Meminta input tanggal data yang akan dihapus.
+		FS:  Mencari data berdasarkan tanggal.
+			Jika data ditemukan, menghapus data.
+			Jika data tidak ditemukan, menampilkan pesan error.
+	*/
 	var tanggal int
 	fmt.Print("Masukkan tanggal yang ingin dihapus: ")
 	fmt.Scan(&tanggal)
@@ -186,6 +225,12 @@ func hapusData(a *dataSampah) {
 }
 
 func cariData(a dataSampah) {
+	/*
+		IS:  Menerima array data sampah. Meminta input tanggal data yang akan dicari.
+		FS:  Mencari data berdasarkan tanggal.
+			Jika data ditemukan, menampilkan data tersebut.
+			Jika data tidak ditemukan, menampilkan pesan error.
+	*/
 	var tanggal int
 	fmt.Print("Masukkan tanggal yang pengen kamu cari: ")
 	fmt.Scan(&tanggal)
@@ -204,6 +249,12 @@ func cariData(a dataSampah) {
 }
 
 func urutkanData(a *dataSampah) {
+	/*
+		IS:  Menerima pointer ke array data sampah. Meminta input kriteria pengurutan dan opsi pencarian setelah pengurutan.
+		FS:  Mengurutkan data berdasarkan kriteria yang dipilih (tanggal atau total sampah).
+			Menampilkan data yang diurutkan.
+			Jika pengguna memilih, melakukan pencarian pada data yang diurutkan.
+	*/
 	var i, pass, l, r, m, f, x int
 	var temp sampah
 	var bs string
@@ -257,7 +308,7 @@ func urutkanData(a *dataSampah) {
 	}
 	fmt.Println("+------------+--------------+----------------+--------------+")
 
-	fmt.Println("mau cari data hasil diurutkan ?")
+	fmt.Println("mau cari data dari hasil yang udah diurutkan ?")
 	fmt.Scan(&bs)
 
 	l = 1
@@ -265,7 +316,7 @@ func urutkanData(a *dataSampah) {
 	f = -1
 
 	switch strings.ToLower(bs) {
-	case "ya", "iya", "udah":
+	case "ya", "iya", "boleh", "mau":
 		fmt.Println("mau cari data kamu pas tanggal berapa ?")
 		fmt.Scan(&x)
 		for l <= r && f == -1 {
