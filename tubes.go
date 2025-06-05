@@ -97,7 +97,7 @@ func main() {
 }
 
 func daurUlang(organik, anorganik float64) (float64, float64, float64) {
-	var daurOrganik, daurAnorganik, totalDaur float64
+	var daurOrganik, daurAnorganik, totalDaur, total, persenOrganik, persenAnorganik, persenTotal float64
 
 	fmt.Print("berapa jumlah sampah organik yang udah kamu daur ulang ? tolong diisi dengan satuan kilogram ya : ")
 	fmt.Scan(&daurOrganik)
@@ -106,12 +106,12 @@ func daurUlang(organik, anorganik float64) (float64, float64, float64) {
 	fmt.Scan(&daurAnorganik)
 	fmt.Println(" ")
 
-	total := organik + anorganik
+	total = organik + anorganik
 	totalDaur = daurOrganik + daurAnorganik
 
-	persenOrganik := (daurOrganik / organik) * 100
-	persenAnorganik := (daurAnorganik / anorganik) * 100
-	persenTotal := (totalDaur / total) * 100
+	persenOrganik = (daurOrganik / organik) * 100
+	persenAnorganik = (daurAnorganik / anorganik) * 100
+	persenTotal = (totalDaur / total) * 100
 
 	return persenOrganik, persenAnorganik, persenTotal
 }
