@@ -21,14 +21,11 @@ var jumData int
 func main() {
 	var data dataSampah
 	var i int = 0
-	var bulan, status string
+	var status string
 	var organik, anorganik, po, pa, pt float64
 
-	fmt.Print("Halo kamu mau merekap sampahmu pada bulan apa : ")
-	fmt.Scan(&bulan)
-	fmt.Println(" ")
-
 	for {
+
 		fmt.Print("Masukkan tanggal , kalo mau berhenti ketik 0 ya : ")
 		fmt.Scan(&data[i].tanggal)
 
@@ -97,7 +94,7 @@ func main() {
 }
 
 func daurUlang(organik, anorganik float64) (float64, float64, float64) {
-	var daurOrganik, daurAnorganik, totalDaur, total, persenOrganik, persenAnorganik, persenTotal float64
+	var daurOrganik, daurAnorganik, total, totalDaur, persenOrganik, persenAnorganik, persenTotal float64
 
 	fmt.Print("berapa jumlah sampah organik yang udah kamu daur ulang ? tolong diisi dengan satuan kilogram ya : ")
 	fmt.Scan(&daurOrganik)
@@ -121,8 +118,8 @@ func tampilData(organik, anorganik, po, pa, pt float64, status string) {
 	if po >= 100 {
 		po = 100
 	}
-	if po >= 100 {
-		po = 100
+	if pa >= 100 {
+		pa = 100
 	}
 	if pt > 100 {
 		pt = 100
