@@ -8,8 +8,8 @@ import (
 
 type sampah struct {
 	tanggal int
-	Or      float64
-	An      float64
+	Or      float64 //dalam Kg
+	An      float64 //dalam Kg
 }
 
 const nmax = 30
@@ -18,20 +18,7 @@ type dataSampah [nmax]sampah
 
 var jumData int
 
-/*
-	IS : Program menerima bulan, data harian (tanggal, organik, anorganik), status daur ulang.
-	FS: Program menyediakan menu untuk edit, hapus, cari, urut data; menghitung persentase daur ulang; menampilkan ringkasan sampah.
-*/
-
 func main() {
-	/*
-		IS:  Tidak ada input langsung dari fungsi ini, tetapi menerima input tidak langsung dari user melalui fungsi lain.
-		FS:  Mengelola alur utama program:
-			-   Menerima input bulan dan data sampah harian.
-			-   Menghitung total sampah.
-			-   Memproses status daur ulang.
-			-   Menampilkan menu dan memanggil fungsi lain berdasarkan pilihan pengguna.
-	*/
 	var data dataSampah
 	var i int = 0
 	var bulan, status string
@@ -110,12 +97,7 @@ func main() {
 }
 
 func daurUlang(organik, anorganik float64) (float64, float64, float64) {
-	/*
-		IS:  Menerima total sampah organik dan anorganik. Meminta input jumlah sampah yang didaur ulang.
-		FS:  Menghitung persentase sampah organik, anorganik, dan total yang didaur ulang.
-			Mengembalikan persentase tersebut.
-	*/
-	var daurOrganik, daurAnorganik, totalDaur, total, persenOrganik, persenAnorganik, persenTotal float64
+	var daurOrganik, daurAnorganik, totalDaur float64
 
 	fmt.Print("berapa jumlah sampah organik yang udah kamu daur ulang ? tolong diisi dengan satuan kilogram ya : ")
 	fmt.Scan(&daurOrganik)
@@ -124,23 +106,17 @@ func daurUlang(organik, anorganik float64) (float64, float64, float64) {
 	fmt.Scan(&daurAnorganik)
 	fmt.Println(" ")
 
-	total = organik + anorganik
+	total := organik + anorganik
 	totalDaur = daurOrganik + daurAnorganik
 
-	persenOrganik = (daurOrganik / organik) * 100
-	persenAnorganik = (daurAnorganik / anorganik) * 100
-	persenTotal = (totalDaur / total) * 100
+	persenOrganik := (daurOrganik / organik) * 100
+	persenAnorganik := (daurAnorganik / anorganik) * 100
+	persenTotal := (totalDaur / total) * 100
 
 	return persenOrganik, persenAnorganik, persenTotal
 }
 
 func tampilData(organik, anorganik, po, pa, pt float64, status string) {
-	/*
-		IS:  Menerima total sampah organik dan anorganik, persentase daur ulang, dan status daur ulang.
-		FS:  Menampilkan total sampah.
-			Jika ada daur ulang, menampilkan persentase dan pesan motivasi.
-			Jika tidak ada daur ulang, menampilkan pesan negatif.
-	*/
 
 	if po >= 100 {
 		po = 100
@@ -177,13 +153,7 @@ func tampilData(organik, anorganik, po, pa, pt float64, status string) {
 }
 
 func editData(a *dataSampah) {
-	/*
-		IS:  Menerima pointer ke array data sampah. Meminta input tanggal data yang akan diedit dan data sampah baru.
-		FS:  Mencari data berdasarkan tanggal.
-			Jika data ditemukan, memperbarui data.
-			Jika data tidak ditemukan, menampilkan pesan error.
-	*/
-	var tanggal, i int
+	var i, tanggal int
 	fmt.Print("Masukkan tanggal yang pengen kamu edit: ")
 	fmt.Scan(&tanggal)
 
@@ -201,13 +171,7 @@ func editData(a *dataSampah) {
 }
 
 func hapusData(a *dataSampah) {
-	/*
-		IS:  Menerima pointer ke array data sampah. Meminta input tanggal data yang akan dihapus.
-		FS:  Mencari data berdasarkan tanggal.
-			Jika data ditemukan, menghapus data.
-			Jika data tidak ditemukan, menampilkan pesan error.
-	*/
-	var tanggal, i int
+	var i, tanggal int
 	fmt.Print("Masukkan tanggal yang ingin dihapus: ")
 	fmt.Scan(&tanggal)
 
@@ -225,18 +189,13 @@ func hapusData(a *dataSampah) {
 }
 
 func cariData(a dataSampah) {
-	/*
-		IS:  Menerima array data sampah. Meminta input tanggal data yang akan dicari.
-		FS:  Mencari data berdasarkan tanggal.
-			Jika data ditemukan, menampilkan data tersebut.
-			Jika data tidak ditemukan, menampilkan pesan error.
-	*/
-	var tanggal, i int
+	var i, tanggal int
 	var ditemukan bool
 	fmt.Print("Masukkan tanggal yang pengen kamu cari: ")
 	fmt.Scan(&tanggal)
 
 	ditemukan = false
+
 	for i = 0; i < jumData; i++ {
 		if a[i].tanggal == tanggal {
 			fmt.Printf("Tanggal: %d, Organik: %.2f, Anorganik: %.2f\n", a[i].tanggal, a[i].Or, a[i].An)
@@ -250,13 +209,7 @@ func cariData(a dataSampah) {
 }
 
 func urutkanData(a *dataSampah) {
-	/*
-		IS:  Menerima pointer ke array data sampah. Meminta input kriteria pengurutan dan opsi pencarian setelah pengurutan.
-		FS:  Mengurutkan data berdasarkan kriteria yang dipilih (tanggal atau total sampah).
-			Menampilkan data yang diurutkan.
-			Jika pengguna memilih, melakukan pencarian pada data yang diurutkan.
-	*/
-	var i, pass, l, r, m, f, x int
+	var i, j, pass, pass2, idx, l, r, m, f, x int
 	var temp sampah
 	var bs string
 
@@ -268,35 +221,40 @@ func urutkanData(a *dataSampah) {
 	var pilihan int
 	fmt.Scan(&pilihan)
 
-	for pass = 1; pass < jumData; i++ {
-		temp = a[pass]
-		i = pass
-		for i > 0 {
-			if pilihan == 1 {
+	if pilihan == 1 {
+		for pass = 1; pass < jumData; pass++ {
+			temp = a[pass]
+			i = pass
+			for i > 0 {
 				if temp.tanggal < a[i-1].tanggal {
 					a[i] = a[i-1]
-				} else {
-					break
 				}
-			} else if pilihan == 2 {
-				if (temp.Or + temp.An) < (a[i-1].Or + a[i-1].An) {
-					a[i] = a[i-1]
-				} else {
-					break
-				}
-			} else {
-				fmt.Println("Pilihan tidak valid.")
+				a[i] = temp
 			}
-			i--
 		}
-		a[i] = temp
-		pass += 1
+	} else if pilihan == 2 {
+		pass2 = 1
+		for pass2 <= jumData-1 {
+			idx = pass2 - 1
+			j = pass2
+			for j < jumData {
+				if a[idx].Or+a[idx].An > a[j].Or+a[j].An {
+					idx = j
+				}
+				j++
+			}
+			temp = a[pass2-1]
+			a[pass2-1] = a[idx]
+			a[idx] = temp
+			pass2++
+		}
+
 	}
 
 	if pilihan == 1 {
 		fmt.Println("ini hasil pengurutan berdasar tanggal")
 	} else if pilihan == 2 {
-		fmt.Println("ini hasil pengurutan berdasar tanggal")
+		fmt.Println("ini hasil pengurutan berdasar total sampah")
 	}
 
 	fmt.Println("\nData setelah diurutkan:")
