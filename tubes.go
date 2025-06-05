@@ -115,7 +115,7 @@ func daurUlang(organik, anorganik float64) (float64, float64, float64) {
 		FS:  Menghitung persentase sampah organik, anorganik, dan total yang didaur ulang.
 			Mengembalikan persentase tersebut.
 	*/
-	var daurOrganik, daurAnorganik, totalDaur float64
+	var daurOrganik, daurAnorganik, totalDaur, total, persenOrganik, persenAnorganik, persenTotal float64
 
 	fmt.Print("berapa jumlah sampah organik yang udah kamu daur ulang ? tolong diisi dengan satuan kilogram ya : ")
 	fmt.Scan(&daurOrganik)
@@ -124,12 +124,12 @@ func daurUlang(organik, anorganik float64) (float64, float64, float64) {
 	fmt.Scan(&daurAnorganik)
 	fmt.Println(" ")
 
-	total := organik + anorganik
+	total = organik + anorganik
 	totalDaur = daurOrganik + daurAnorganik
 
-	persenOrganik := (daurOrganik / organik) * 100
-	persenAnorganik := (daurAnorganik / anorganik) * 100
-	persenTotal := (totalDaur / total) * 100
+	persenOrganik = (daurOrganik / organik) * 100
+	persenAnorganik = (daurAnorganik / anorganik) * 100
+	persenTotal = (totalDaur / total) * 100
 
 	return persenOrganik, persenAnorganik, persenTotal
 }
@@ -183,11 +183,11 @@ func editData(a *dataSampah) {
 			Jika data ditemukan, memperbarui data.
 			Jika data tidak ditemukan, menampilkan pesan error.
 	*/
-	var tanggal int
+	var tanggal, i int
 	fmt.Print("Masukkan tanggal yang pengen kamu edit: ")
 	fmt.Scan(&tanggal)
 
-	for i := 0; i < jumData; i++ {
+	for i = 0; i < jumData; i++ {
 		if a[i].tanggal == tanggal {
 			fmt.Print("Masukkan jumlah sampah organik (Kg): ")
 			fmt.Scan(&a[i].Or)
@@ -207,11 +207,11 @@ func hapusData(a *dataSampah) {
 			Jika data ditemukan, menghapus data.
 			Jika data tidak ditemukan, menampilkan pesan error.
 	*/
-	var tanggal int
+	var tanggal, i int
 	fmt.Print("Masukkan tanggal yang ingin dihapus: ")
 	fmt.Scan(&tanggal)
 
-	for i := 0; i < jumData; i++ {
+	for i = 0; i < jumData; i++ {
 		if a[i].tanggal == tanggal {
 			for j := i; j < jumData-1; j++ {
 				a[j] = a[j+1]
@@ -231,12 +231,13 @@ func cariData(a dataSampah) {
 			Jika data ditemukan, menampilkan data tersebut.
 			Jika data tidak ditemukan, menampilkan pesan error.
 	*/
-	var tanggal int
+	var tanggal, i int
+	var ditemukan bool
 	fmt.Print("Masukkan tanggal yang pengen kamu cari: ")
 	fmt.Scan(&tanggal)
 
-	ditemukan := false
-	for i := 0; i < jumData; i++ {
+	ditemukan = false
+	for i = 0; i < jumData; i++ {
 		if a[i].tanggal == tanggal {
 			fmt.Printf("Tanggal: %d, Organik: %.2f, Anorganik: %.2f\n", a[i].tanggal, a[i].Or, a[i].An)
 			ditemukan = true
@@ -286,7 +287,7 @@ func urutkanData(a *dataSampah) {
 			} else {
 				fmt.Println("Pilihan tidak valid.")
 			}
-			i = i - 1
+			i--
 		}
 		a[i] = temp
 		pass += 1
@@ -302,7 +303,7 @@ func urutkanData(a *dataSampah) {
 	fmt.Println("+------------+--------------+----------------+--------------+")
 	fmt.Println("|   Tanggal  | Organik (Kg) | Anorganik (Kg) |  Total (Kg)  |")
 	fmt.Println("+------------+--------------+----------------+--------------+")
-	for i := 0; i < jumData; i++ {
+	for i = 0; i < jumData; i++ {
 		total := a[i].Or + a[i].An
 		fmt.Printf("| %10d | %12.2f | %14.2f | %12.2f |\n", a[i].tanggal, a[i].Or, a[i].An, total)
 	}
