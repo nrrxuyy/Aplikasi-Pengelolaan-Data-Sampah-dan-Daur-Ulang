@@ -223,10 +223,10 @@ func urutkanData(a *dataSampah) {
 			temp = a[pass]
 			i = pass
 			for i > 0 && temp.tanggal < a[i-1].tanggal {
-					a[i] = a[i-1]
-				}
-				a[i] = temp
+				a[i] = a[i-1]
 			}
+			a[i] = temp
+		}
 	} else if pilihan == 2 {
 		pass2 = 1
 		for pass2 <= jumData-1 {
